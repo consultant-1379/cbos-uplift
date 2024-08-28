@@ -1,0 +1,108 @@
+modelVersion: 2.0
+
+docker-images:
+  - ci-toolkit: armdocker.rnd.ericsson.se/proj-mxe-ci-internal/ci-toolkit:20221123
+  - adp-release-auto: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/bob-adp-release-auto:${env.RELEASE_AUTO_TAG}
+
+env:
+    # Default docker image tags
+    - RELEASE_AUTO_TAG (default=latest)
+    - MXE_TOOLKIT_TAG (default=20220721-ubuntu-20220415)
+    - RELEASE (default=true)
+    - VERSION_PREFIX_FILE (default=VERSION_PREFIX)
+    - USER
+    - CI_USER (default=mxecifunc)
+    - ARM_API_TOKEN
+    - PWD
+    - EMAIL (default=mxecifunc@ericsson.com)
+
+properties:
+    - seldon-build-repo-url: ssh://gerrit.ericsson.se:29418/MXE/mlops-3pps/seldon-core-build
+    - seldon-build-path: .bob/repos/seldon-build
+    - seldon-build-version: master
+    - seldon-build-files-list: dependencies.seldon-executor.yaml,dependencies.seldon-operator.yaml
+
+    - kaniko-build-repo-url: ssh://gerrit.ericsson.se:29418/MXE/mlops-3pps/kaniko-build
+    - kaniko-build-path: .bob/repos/kaniko-build
+    - kaniko-build-version: master
+    - kaniko-build-files-list: dependencies.packager.yaml
+
+
+# Variables, set by below tasks
+var:
+  - version
+  - latest-cbo-pra-version
+  - seldon-build-cbo-version
+  - kaniko-build-cbo-version
+  - seldon-needs-update
+  - kaniko-needs-update
+
+rules:
+    clean:
+      - task: clean
+        cmd: rm -rf .bob/
+    init:
+      - task: version
+        docker-image: adp-release-auto
+        cmd: generate-version --is-release=${env.RELEASE} -f ${env.VERSION_PREFIX_FILE} --output=version
+      - task: setvars
+        cmd: 
+        - echo "false" > .bob/var.seldon-needs-update
+        - echo "false" > .bob/var.kaniko-needs-update
+    
+    # writes .var.latest-cbo-pra-version
+    cbo-version-lookup:
+      - task: get-latest
+        docker-image: ci-toolkit
+        docker-envs:
+        - CI_USER
+        - API_TOKEN
+        cmd: ${env.PWD}/ci/scripts/get-latest-cbo-pra-version.sh
+
+    conditions:
+      - task: check-seldon-cbos-version
+        cmd: test "${var.seldon-build-cbo-version}" != "None" && test "${var.seldon-build-cbo-version}" != "${var.latest-cbo-pra-version}"
+      - task: check-kaniko-cbos-version
+        cmd: test "${var.kaniko-build-cbo-version}" != "None" && test "${var.kaniko-build-cbo-version}" != "${var.latest-cbo-pra-version}"
+    
+    # clone seldon-core-build & check if cbo version needs updates
+    update-seldon-build:
+      - task: clone 
+        cmd: ${env.PWD}/ci/scripts/clone.sh --repoURL ${seldon-build-repo-url} --version ${seldon-build-version} --clone-to ${seldon-build-path}
+      - task: get_cbo_version
+        docker-image: ci-toolkit
+        cmd: ${env.PWD}/ci/scripts/get-cbo-version.sh ${seldon-build-path} ".bob/var.seldon-build-cbo-version"
+      - task: already-latest
+        condition: NOT conditions:check-seldon-cbos-version
+        cmd: echo "CBO version is already up-to-date"
+      - task: update-version
+        condition: conditions:check-seldon-cbos-version
+        docker-image: adp-release-auto
+        docker-in-docker: socket
+        docker-envs:
+            - GERRIT_USERNAME
+            - GERRIT_PASSWORD
+        cmd: 
+        - echo "true" > .bob/var.seldon-needs-update
+        - ${env.PWD}/ci/scripts/update-cbo-in-repo.sh "${seldon-build-path}" "${var.latest-cbo-pra-version}" "${env.EMAIL}" "${seldon-build-files-list}"
+
+    # clone kaniko-build & check if cbo version needs updates
+    update-kaniko-build:
+      - task: clone 
+        cmd: ${env.PWD}/ci/scripts/clone.sh --repoURL ${kaniko-build-repo-url} --version ${kaniko-build-version} --clone-to ${kaniko-build-path}
+      - task: get_cbo_version
+        docker-image: ci-toolkit
+        cmd: ${env.PWD}/ci/scripts/get-cbo-version.sh ${kaniko-build-path} ".bob/var.kaniko-build-cbo-version"
+      - task: already-latest
+        condition: NOT conditions:check-kaniko-cbos-version
+        cmd: echo "CBO version is already up-to-date"
+      - task: update-version
+        condition: conditions:check-kaniko-cbos-version
+        docker-image: adp-release-auto
+        docker-in-docker: socket
+        docker-envs:
+            - GERRIT_USERNAME
+            - GERRIT_PASSWORD
+        cmd: 
+        - echo "true" > .bob/var.kaniko-needs-update
+        - ${env.PWD}/ci/scripts/update-cbo-in-repo.sh "${kaniko-build-path}" "${var.latest-cbo-pra-version}" "${env.EMAIL}" "${kaniko-build-files-list}"

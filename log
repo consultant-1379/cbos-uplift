@@ -1,0 +1,110 @@
+2022-11-23 12:28:56,037 - [bob] - [0;36mINFO[0m - Command to be executed: [git describe --dirty]
+2022-11-23 12:28:56,042 - [bob] - [0;36mINFO[0m - 1.24.0+0
+2022-11-23 12:28:56,043 - [bob] - [0;36mINFO[0m - Starting bob 2.0, version: [1.24.0+0]
+2022-11-23 12:28:56,047 - [bob] - [0;36mINFO[0m - ================================================================================
+2022-11-23 12:28:56,047 - [bob] - [0;36mINFO[0m - ==== Executing Rule: [update-kaniko-build] task:[None]
+2022-11-23 12:28:56,047 - [bob] - [0;36mINFO[0m - --------------------------------------------------------------------------------
+2022-11-23 12:28:56,047 - [bob] - [0;36mINFO[0m - [1;36m---- Executing Task [update-kaniko-build:clone][0m
+2022-11-23 12:28:56,048 - [bob] - [0;36mINFO[0m - Command to be executed: [/mnt/disk0/enxxram/home/enxxram/workspace/3pps/cbos-uplift/ci/scripts/clone.sh --repoURL ssh://gerrit.ericsson.se:29418/MXE/mlops-3pps/kaniko-build --version master --clone-to .bob/repos/kaniko-build]
++ case "$(uname -s)" in
+++ uname -s
+++ readlink -f /mnt/disk0/enxxram/home/enxxram/workspace/3pps/cbos-uplift/ci/scripts/clone.sh
++ SCRIPT=/mnt/disk0/enxxram/home/enxxram/workspace/3pps/cbos-uplift/ci/scripts/clone.sh
+++ dirname /mnt/disk0/enxxram/home/enxxram/workspace/3pps/cbos-uplift/ci/scripts/clone.sh
++ BASE_DIR=/mnt/disk0/enxxram/home/enxxram/workspace/3pps/cbos-uplift/ci/scripts
++++ dirname /mnt/disk0/enxxram/home/enxxram/workspace/3pps/cbos-uplift/ci/scripts
+++ dirname /mnt/disk0/enxxram/home/enxxram/workspace/3pps/cbos-uplift/ci
++ REPOROOT=/mnt/disk0/enxxram/home/enxxram/workspace/3pps/cbos-uplift
++ '[' 6 -gt 0 ']'
++ case "$1" in
++ REPO_URL=ssh://gerrit.ericsson.se:29418/MXE/mlops-3pps/kaniko-build
++ shift 2
++ '[' 4 -gt 0 ']'
++ case "$1" in
++ RELEASE_TAG=master
++ shift 2
++ '[' 2 -gt 0 ']'
++ case "$1" in
++ WORKSPACE=.bob/repos/kaniko-build
++ shift 2
++ '[' 0 -gt 0 ']'
++ cleanup
++ TEMP_DIRS=("${WORKSPACE}")
++ for temp_dir in "${TEMP_DIRS[@]}"
++ [[ -d .bob/repos/kaniko-build ]]
++ rm -rf .bob/repos/kaniko-build
++ git clone -b master ssh://gerrit.ericsson.se:29418/MXE/mlops-3pps/kaniko-build .bob/repos/kaniko-build
+Cloning into '.bob/repos/kaniko-build'...
+Total 2 (delta 0), reused 0 (delta 0)
+2022-11-23 12:28:56,834 - [bob] - [0;36mINFO[0m - --------------------------------------------------------------------------------
+2022-11-23 12:28:56,834 - [bob] - [0;36mINFO[0m - [1;36m---- Executing Task [update-kaniko-build:get_cbo_version][0m
+2022-11-23 12:28:56,834 - [bob] - [0;36mINFO[0m - Pulling image [armdocker.rnd.ericsson.se/proj-gaia-mlops-ci-internal/ci-toolkit:20221123]
+2022-11-23 12:28:56,948 - [bob] - [0;36mINFO[0m - 20221123: Pulling from proj-gaia-mlops-ci-internal/ci-toolkit
+2022-11-23 12:28:56,948 - [bob] - [0;36mINFO[0m - Digest: sha256:8f7940deb1b4d1ed236347e3f7fc47912d4c0b0402253857810a2b4cb7227e0e
+2022-11-23 12:28:56,948 - [bob] - [0;36mINFO[0m - armdocker.rnd.ericsson.se/proj-gaia-mlops-ci-internal/ci-toolkit:20221123
+2022-11-23 12:28:56,950 - [bob] - [0;36mINFO[0m - Inspecting image armdocker.rnd.ericsson.se/proj-gaia-mlops-ci-internal/ci-toolkit:20221123
+2022-11-23 12:28:56,950 - [bob] - [0;36mINFO[0m - Command to be executed: [docker inspect --type=image armdocker.rnd.ericsson.se/proj-gaia-mlops-ci-internal/ci-toolkit:20221123 -f '{{range $key, $value := .Config.Labels}}{{$key}}: {{$value}}{{println}}{{end}}']
+2022-11-23 12:28:56,977 - [bob] - [0;36mINFO[0m - 
+2022-11-23 12:28:57,009 - [bob] - [0;36mINFO[0m - Looking for git root directory
+2022-11-23 12:28:57,009 - [bob] - [0;36mINFO[0m - Command to be executed: [git rev-parse --show-toplevel]
+2022-11-23 12:28:57,012 - [bob] - [0;36mINFO[0m - /mnt/disk0/enxxram/home/enxxram/workspace/3pps/cbos-uplift
+2022-11-23 12:28:57,014 - [bob] - [0;36mINFO[0m - 
+2022-11-23 12:28:57,014 - [bob] - [0;36mINFO[0m - PWD=/mnt/disk0/enxxram/home/enxxram/workspace/3pps/cbos-uplift
+2022-11-23 12:28:57,014 - [bob] - [0;36mINFO[0m - img=armdocker.rnd.ericsson.se/proj-gaia-mlops-ci-internal/ci-toolkit:20221123
+2022-11-23 12:28:57,014 - [bob] - [0;36mINFO[0m - Command to be executed: [docker run --init --rm --volume /mnt/disk0/enxxram/home/enxxram/workspace/3pps/cbos-uplift:/mnt/disk0/enxxram/home/enxxram/workspace/3pps/cbos-uplift:rw --workdir /mnt/disk0/enxxram/home/enxxram/workspace/3pps/cbos-uplift --user 1011:1011 armdocker.rnd.ericsson.se/proj-gaia-mlops-ci-internal/ci-toolkit:20221123 yq '.properties[]' ".bob/repos/kaniko-build/rulesets/common-properties.yaml" | yq '.common-base-os-version'  > .bob/var.kaniko-build-cbo-version]
+Error: open .bob/repos/kaniko-build/rulesets/common-properties.yaml: no such file or directory
+2022-11-23 12:28:57,720 - [bob] - [0;36mINFO[0m - --------------------------------------------------------------------------------
+2022-11-23 12:28:57,720 - [bob] - [0;36mINFO[0m - [1;36m---- Executing Task [update-kaniko-build:already-latest][0m
+2022-11-23 12:28:57,720 - [bob] - [0;36mINFO[0m - Checking condition: [NOT conditions:check-kaniko-cbos-version]
+2022-11-23 12:28:57,720 - [bob] - [0;36mINFO[0m - --------------------------------------------------------------------------------
+2022-11-23 12:28:57,720 - [bob] - [0;36mINFO[0m - [1;36m---- Executing condition Task [conditions:check-kaniko-cbos-version][0m
+2022-11-23 12:28:57,721 - [bob] - [0;36mINFO[0m - Command to be executed: [test "null" != "5.5.0-25"]
+2022-11-23 12:28:57,725 - [bob] - [0;36mINFO[0m - -- Condition [NOT conditions:check-kaniko-cbos-version] is: False, skipping
+2022-11-23 12:28:57,725 - [bob] - [0;36mINFO[0m - --------------------------------------------------------------------------------
+2022-11-23 12:28:57,725 - [bob] - [0;36mINFO[0m - [1;36m---- Executing Task [update-kaniko-build:update-version][0m
+2022-11-23 12:28:57,725 - [bob] - [0;36mINFO[0m - Checking condition: [conditions:check-kaniko-cbos-version]
+2022-11-23 12:28:57,726 - [bob] - [0;36mINFO[0m - --------------------------------------------------------------------------------
+2022-11-23 12:28:57,726 - [bob] - [0;36mINFO[0m - [1;36m---- Executing condition Task [conditions:check-kaniko-cbos-version][0m
+2022-11-23 12:28:57,726 - [bob] - [0;36mINFO[0m - Command to be executed: [test "null" != "5.5.0-25"]
+2022-11-23 12:28:57,730 - [bob] - [0;36mINFO[0m - -- Condition [conditions:check-kaniko-cbos-version] is: True
+2022-11-23 12:28:57,730 - [bob] - [0;36mINFO[0m - Pulling image [armdocker.rnd.ericsson.se/proj-adp-cicd-drop/bob-adp-release-auto:latest]
+2022-11-23 12:28:58,466 - [bob] - [0;36mINFO[0m - Digest: sha256:cb31e896ce93c4ee489fc05882be7056903ab454d55dfda5a21a3254659216af
+2022-11-23 12:28:58,466 - [bob] - [0;36mINFO[0m - armdocker.rnd.ericsson.se/proj-adp-cicd-drop/bob-adp-release-auto:latest
+2022-11-23 12:28:58,468 - [bob] - [0;36mINFO[0m - Inspecting image armdocker.rnd.ericsson.se/proj-adp-cicd-drop/bob-adp-release-auto:latest
+2022-11-23 12:28:58,468 - [bob] - [0;36mINFO[0m - Command to be executed: [docker inspect --type=image armdocker.rnd.ericsson.se/proj-adp-cicd-drop/bob-adp-release-auto:latest -f '{{range $key, $value := .Config.Labels}}{{$key}}: {{$value}}{{println}}{{end}}']
+2022-11-23 12:28:58,496 - [bob] - [0;36mINFO[0m - adp.app.alpine-version: 3.10
+2022-11-23 12:28:58,497 - [bob] - [0;36mINFO[0m - adp.app.version: 2.6.0-3
+2022-11-23 12:28:58,497 - [bob] - [0;36mINFO[0m - adp.baseimage.tag: 1.1.0-24
+2022-11-23 12:28:58,497 - [bob] - [0;36mINFO[0m - adp.commit: 6ec330f5
+2022-11-23 12:28:58,497 - [bob] - [0;36mINFO[0m - adp.fossacli3version: 3.5.1
+2022-11-23 12:28:58,497 - [bob] - [0;36mINFO[0m - adp.fossacliversion: 1.1.7
+2022-11-23 12:28:58,497 - [bob] - [0;36mINFO[0m - adp.helm: v3.2.4
+2022-11-23 12:28:58,497 - [bob] - [0;36mINFO[0m - adp.helm2: v2.17.0
+2022-11-23 12:28:58,497 - [bob] - [0;36mINFO[0m - adp.helm3: v3.2.4
+2022-11-23 12:28:58,497 - [bob] - [0;36mINFO[0m - adp.helm3_versions: v3.2.4 v3.5.2 v3.6.2 v3.8.1
+2022-11-23 12:28:58,497 - [bob] - [0;36mINFO[0m - adp.java: 11.0.4_p4-r1
+2022-11-23 12:28:58,497 - [bob] - [0;36mINFO[0m - adp.pet2version: 2.2.0-b.1
+2022-11-23 12:28:58,497 - [bob] - [0;36mINFO[0m - adp.python3: 3.7.10-r0
+2022-11-23 12:28:58,497 - [bob] - [0;36mINFO[0m - adp.repository: https://gerrit.ericsson.se/plugins/gitiles/adp-cicd/bob-adp-release-auto
+2022-11-23 12:28:58,497 - [bob] - [0;36mINFO[0m - maintainer: ADP Spider Team <PDLADPSPID@pdl.internal.ericsson.com>
+2022-11-23 12:28:58,497 - [bob] - [0;36mINFO[0m - 
+2022-11-23 12:28:58,501 - [bob] - [0;36mINFO[0m - 
+2022-11-23 12:28:58,501 - [bob] - [0;36mINFO[0m - PWD=/mnt/disk0/enxxram/home/enxxram/workspace/3pps/cbos-uplift
+2022-11-23 12:28:58,502 - [bob] - [0;36mINFO[0m - img=armdocker.rnd.ericsson.se/proj-adp-cicd-drop/bob-adp-release-auto:latest
+2022-11-23 12:28:58,502 - [bob] - [0;36mINFO[0m - Command to be executed: [docker run --init --rm  --env GERRIT_PASSWORD --env GERRIT_USERNAME --volume /mnt/disk0/enxxram/home/enxxram/workspace/3pps/cbos-uplift:/mnt/disk0/enxxram/home/enxxram/workspace/3pps/cbos-uplift:rw --group-add 998 --volume /var/run/docker.sock:/var/run/docker.sock --workdir /mnt/disk0/enxxram/home/enxxram/workspace/3pps/cbos-uplift --user 1011:1011 armdocker.rnd.ericsson.se/proj-adp-cicd-drop/bob-adp-release-auto:latest /mnt/disk0/enxxram/home/enxxram/workspace/3pps/cbos-uplift/ci/scripts/update-cbo-in-repo.sh ".bob/repos/kaniko-build" "5.5.0-25" "mxecifunc@ericsson.com" "dependencies.packager.yaml"]
++ WORKSPACE=.bob/repos/kaniko-build
++ CBO_PRA_VERSION=5.5.0-25
++ EMAIL=mxecifunc@ericsson.com
++ FILES_TO_UPDATE=dependencies.packager.yaml
++ FOSSA_DIR=config/fossa
++ IFS=,
++ read -ra filesToUpdate
+++ basename .bob/repos/kaniko-build
++ repoName=kaniko-build
++ echo 'Updating CBOS version to 5.5.0-25 in kaniko-build'
++ cd .bob/repos/kaniko-build
++ changedFiles=(rulesets/common-properties.yaml)
++ sed -i 's/common-base-os-version: .*/common-base-os-version: 5.5.0-25/' rulesets/common-properties.yaml
+Updating CBOS version to 5.5.0-25 in kaniko-build
+sed: rulesets/common-properties.yaml: No such file or directory
+2022-11-23 12:28:59,171 - [bob] - [0;36mINFO[0m - Execution finished in 0:00:03.135939 seconds
